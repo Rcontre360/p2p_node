@@ -2,11 +2,12 @@ package main
 
 import (
 	"context"
+	"main/rpc"
 	"main/server"
 	"net/http"
 )
 
-func main() {
+func httpServer() {
 	//config := cmd.ParseConfigFromArgs()
 	mux := http.NewServeMux()
 	ctx, cancelCtx := context.WithCancel(context.Background())
@@ -15,6 +16,15 @@ func main() {
 
 	httpServer := server.NewHttpServer(mux, ctx)
 	httpServer.StartServer(cancelCtx)
+
+	<-ctx.Done()
+}
+
+func main() {
+	ctx, cancelCtx := context.WithCancel(context.Background())
+	rpcServer := rpc.NewRPCServer()
+
+	rpcServer.StartServer(cancelCtx)
 
 	<-ctx.Done()
 }

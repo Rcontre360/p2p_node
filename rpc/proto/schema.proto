@@ -1,0 +1,22 @@
+syntax = "proto3";
+package p2p;
+
+option go_package = "rpc/definitions";
+
+
+message Point {
+  int32 latitude = 1;
+  int32 longitude = 2;
+}
+
+message Feature {
+  // The name of the feature.
+  string name = 1;
+
+  // The point where the feature is detected.
+  Point location = 2;
+}
+
+service P2P{
+  rpc Request(Point) returns (Feature) {}
+}
