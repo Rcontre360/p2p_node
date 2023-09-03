@@ -1,8 +1,10 @@
 package server
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"net"
 	"net/http"
 )
 
@@ -18,11 +20,16 @@ type HttpServer struct {
 	port     int
 }
 
-func NewHttpServer(handler http.Handler) *HttpServer {
+func NewHttpServer(handler http.Handler, ctx context.Context) *HttpServer {
+
 	return &HttpServer{
 		server: &http.Server{
 			Handler: handler,
 			Addr:    ":8080",
+			BaseContext: func(l net.Listener) context.Context {
+				ctx = context.WithValue(ctx, "rafael", l.Addr().String())
+				return ctx
+			},
 		},
 		CorsAllowedOrigins: []string{},
 		prefix:             "",
@@ -33,7 +40,7 @@ func NewHttpServer(handler http.Handler) *HttpServer {
 	}
 }
 
-func (server *HttpServer) StartServer() {
+func (server *HttpServer) StartServer(cancelCtx context.CancelFunc) {
 	go func() {
 		err := server.server.ListenAndServe()
 
@@ -42,5 +49,7 @@ func (server *HttpServer) StartServer() {
 		} else if err != nil {
 			fmt.Printf("error listening for server one: %s\n", err)
 		}
+
+		cancelCtx()
 	}()
 }

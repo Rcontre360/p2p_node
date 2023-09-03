@@ -1,20 +1,20 @@
 package main
 
 import (
-	"fmt"
-	"main/cmd"
+	"context"
 	"main/server"
 	"net/http"
 )
 
 func main() {
-	config := cmd.ParseConfigFromArgs()
+	//config := cmd.ParseConfigFromArgs()
 	mux := http.NewServeMux()
+	ctx, cancelCtx := context.WithCancel(context.Background())
 
-	fmt.Println("config: ", config)
 	server.RegisterHandlers(mux)
 
-	httpServer := server.NewHttpServer(mux)
-	httpServer.StartServer()
+	httpServer := server.NewHttpServer(mux, ctx)
+	httpServer.StartServer(cancelCtx)
 
+	<-ctx.Done()
 }
