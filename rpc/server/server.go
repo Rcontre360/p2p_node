@@ -33,7 +33,7 @@ func NewRPCServer() *RPCServer {
 		jwtSecret:          nil,
 		endpoint:           "",
 		host:               "localhost", // Default host
-		port:               8080,        // Default port
+		port:               8000,        // Default port
 	}
 }
 

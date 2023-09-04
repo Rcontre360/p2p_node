@@ -21,7 +21,6 @@ type HttpServer struct {
 }
 
 func NewHttpServer(handler http.Handler, ctx context.Context) *HttpServer {
-
 	return &HttpServer{
 		server: &http.Server{
 			Handler: handler,
@@ -42,8 +41,9 @@ func NewHttpServer(handler http.Handler, ctx context.Context) *HttpServer {
 
 func (server *HttpServer) StartServer(cancelCtx context.CancelFunc) {
 	go func() {
+		fmt.Printf("server initiated\n")
 		err := server.server.ListenAndServe()
-
+		fmt.Print(err)
 		if errors.Is(err, http.ErrServerClosed) {
 			fmt.Printf("server closed\n")
 		} else if err != nil {
