@@ -5,7 +5,8 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"main/rpc/definitions"
+	"main/cmd"
+
 	"net"
 
 	"google.golang.org/grpc"
@@ -13,7 +14,7 @@ import (
 
 // server is used to implement helloworld.GreeterServer.
 type RPCServer struct {
-	definitions.UnimplementedP2PServer
+	// definitions.UnimplementedP2PServer
 	server *grpc.Server
 
 	CorsAllowedOrigins []string
@@ -25,7 +26,7 @@ type RPCServer struct {
 	port     int
 }
 
-func NewRPCServer() *RPCServer {
+func NewRPCServer(config *cmd.Config) *RPCServer {
 	return &RPCServer{
 		server:             grpc.NewServer(),
 		CorsAllowedOrigins: []string{},
@@ -33,7 +34,7 @@ func NewRPCServer() *RPCServer {
 		jwtSecret:          nil,
 		endpoint:           "",
 		host:               "localhost", // Default host
-		port:               8000,        // Default port
+		port:               config.Port, // Default port
 	}
 }
 
@@ -44,8 +45,8 @@ func (server *RPCServer) StartServer(cancelCtx context.CancelFunc) {
 			log.Fatalf("failed to listen: %v", err)
 		}
 
-		grpcServer := grpc.NewServer()
-		definitions.RegisterP2PServer(grpcServer, server)
+		// grpcServer := grpc.NewServer()
+		// definitions.RegisterP2PServer(grpcServer, server)
 
 		if err := server.server.Serve(lis); err != nil {
 			log.Fatalf("failed to serve: %v", err)
