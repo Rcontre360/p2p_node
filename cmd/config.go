@@ -15,3 +15,12 @@ func NewDefaultConfig() *Config {
 		Port:      8080,
 	}
 }
+
+// NewDefaultConfig creates a new Config instance with default values.
+func RPCDefaultConfig() *Config {
+	return &Config{
+		Http:      false,
+		WebSocket: false,
+		Port:      8000,
+	}
+}

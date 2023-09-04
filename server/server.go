@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"main/cmd"
 	"net"
 	"net/http"
 )
@@ -20,12 +21,11 @@ type HttpServer struct {
 	port     int
 }
 
-func NewHttpServer(handler http.Handler, ctx context.Context) *HttpServer {
-
+func NewHttpServer(handler http.Handler, ctx context.Context, config *cmd.Config) *HttpServer {
 	return &HttpServer{
 		server: &http.Server{
 			Handler: handler,
-			Addr:    ":8080",
+			Addr:    ":" + fmt.Sprint(config.Port),
 			BaseContext: func(l net.Listener) context.Context {
 				ctx = context.WithValue(ctx, "rafael", l.Addr().String())
 				return ctx
@@ -36,20 +36,20 @@ func NewHttpServer(handler http.Handler, ctx context.Context) *HttpServer {
 		jwtSecret:          nil,
 		endpoint:           "",
 		host:               "localhost", // Default host
-		port:               8080,        // Default port
+		port:               config.Port, // Default port
 	}
 }
 
 func (server *HttpServer) StartServer(cancelCtx context.CancelFunc) {
 	go func() {
+		fmt.Printf("server initiated\n")
 		err := server.server.ListenAndServe()
-
+		fmt.Print(err)
 		if errors.Is(err, http.ErrServerClosed) {
 			fmt.Printf("server closed\n")
 		} else if err != nil {
 			fmt.Printf("error listening for server one: %s\n", err)
 		}
-
 		cancelCtx()
 	}()
 }

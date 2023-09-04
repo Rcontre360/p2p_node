@@ -14,5 +14,6 @@ func getHello(w http.ResponseWriter, r *http.Request) {
 }
 
 func RegisterHandlers(mux *http.ServeMux) {
+	fmt.Printf("Registering Handlers...\n")
 	mux.HandleFunc("/hello", getHello)
 }
